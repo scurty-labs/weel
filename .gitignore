@@ -1,0 +1,4 @@
+*.products/
+*.buildv1.*
+install.sh
+.mx2/

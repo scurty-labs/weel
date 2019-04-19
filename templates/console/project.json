@@ -1,0 +1,11 @@
+{
+	"main":"main",
+	"name":"%NAME%",
+	"type":"console",
+	
+	"preDebug":"",
+	"postDebug":"",
+	
+	"preRelease":"",
+	"postRelease":""
+}

@@ -1,0 +1,11 @@
+{
+	"main":"main",
+	"name":"weel",
+	"type":"console",
+	
+	"preDebug":"",
+	"postDebug":"",
+	
+	"preRelease":"",
+	"postRelease":"./install.sh"
+}
