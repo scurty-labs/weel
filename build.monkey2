@@ -32,22 +32,28 @@ Function BuildProject(path:String, target:String, release:Bool)
 	code.SetVar("NAME", proj.Name)
 	code.SetVar("TARGET", target)
 	code.SetVar("TARGET2", target.Capitalize())
-	code.SetVar("TYPE", proj.Type)
+	code.SetVar("TYPE", proj.Type) 'NOTE: Either GUI or CONSOLE
 	code.SetVar("MODE", (release) ? "release" Else "debug" )
 	code.SetVar("MAIN", proj.MainFileName)
 	code.SetVar("PATH", main)
 	cmd = code.Format(cmd)
+	
 	Local prevDir:String = CurrentDir()
 	ChangeDir(projectDir)
+	
 	If(proj.PreDebug.Length <> 0 And Not release) Then libc.system(proj.PreDebug)
 	If(proj.PreRelease.Length <> 0) And release Then libc.system(proj.PreRelease)
+	
 	ChangeDir(prevDir)
+	
 	' --- BUILD APPLICATION ----
 	libc.system(cmd)
 
 	ChangeDir(projectDir)
+	
 	If(proj.PostDebug.Length <> 0 And Not release) Then libc.system(proj.PostDebug)
 	If(proj.PostRelease.Length <> 0 And release) Then libc.system(proj.PostRelease)
+	
 	ChangeDir(prevDir)
 	
 End

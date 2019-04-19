@@ -11,13 +11,11 @@ Function RunProject(path:String)
 		Return
 	Endif
 	
-	' Load Project File
 	Local proj:ProjectConf = New ProjectConf
 	If(proj.Load(projectFile))
 		Print "Can't load 'project.json' file"
 		Return
 	Endif
-	
 	
 	Local runDir:String = projectDir + "/" + proj.MainFileName+".products/" + GetHost() + "/" + proj.Name
 	

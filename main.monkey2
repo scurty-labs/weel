@@ -42,7 +42,7 @@ Using argparse..
 Using m2stp..
 
 ' MONKEY ENVIRONMENT CONFIG
-Global MONKEY_PATH:String = "../"
+Global MONKEY_PATH:String = AppDir() + "../"
 Global MONKEY_BIN:String = MONKEY_PATH + "bin/"
 Global MONKEY_MODS:String = MONKEY_PATH + "modules"
 Global MONKEY_SCRIPTS:String = MONKEY_PATH + "scripts/"
@@ -78,7 +78,7 @@ Function Main()
 		BuildModule(this.GetArg(0), this.GetArg(1))
 	End, 2)
 	
-	CMD.Reg("run", " [project name]~t Executes target project on desktop systems", Lambda(this:Option)
+	CMD.Reg("run", " [project name]~t Executes target project on host system", Lambda(this:Option)
 		RunProject(this.GetArg(0))
 	End, 1)
 	
@@ -90,9 +90,13 @@ Function Main()
 		BuildProject(this.GetArg(0), this.GetArg(1), True)
 	End, 2)
 	
-	CMD.Reg("install", " [module name]~t Installs module from repository to '*/modules'", Lambda(this:Option)
+	' --- INSTALL COMMANDS ---
+	Local installCMD:Void( Option ) = Lambda(this:Option)
 		InstallModule(this.GetArg(0))
-	End, 1)
+	End
+	Local installUsage:String = " [module name]~t Installs module from repository to '*/modules'"
+	CMD.Reg("install", installUsage, installCMD, 1)
+	CMD.Reg("-i", installUsage, installCMD, 1)
 	
 	CMD.Reg("add", " [name] [.git/.zip URL]~t Adds new git/zip repository entry to locaol sources database.", Lambda(this:Option)
 		AddRepo(this.GetArg(0), this.GetArg(1))
