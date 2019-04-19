@@ -55,8 +55,8 @@ Function Main()
 
 	' --- Get 'Host Specific' Monkey Compiler Path
 	#If __TARGET__="linux"
-		'MX2CC = MONKEY_BIN + "mx2cc_linux"
-		MX2CC = "/home/scott/Apps/monkey/scripts/mx2cc.products/mx2cc_linux"
+		MX2CC = MONKEY_BIN + "mx2cc_linux"
+		'MX2CC = "/home/scott/Apps/monkey/scripts/mx2cc.products/mx2cc_linux"
 	#ElseIf __TARGET__="windows"
 		MX2CC = MONKEY_BIN + "mx2cc_windows"
 	#ElseIf __TARGET__"macos"
