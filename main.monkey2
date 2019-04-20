@@ -5,6 +5,8 @@ Namespace APPLICATION_WEEL
 #rem
 	
 	TODO:
+		- add `weel find [package name]` [locates repo package]
+		- add `weel check [package name]` [checks if target module is installed and/or built correctly]
 		- find better command line argument parser(Commands might be subject to change)
 		- auto resolve dependencies from modules and projects via project/module.json file
 		- support for desktop icons on all host platforms. I.E: Windows, Mac, and Linux
