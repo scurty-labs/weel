@@ -34,4 +34,4 @@ Weel is a WIP 'Package Manager' for the Monkey2 Programming Language. Allowing y
 
 #### Adding Modules to Local Repo
 
-*`weel add [package name] [package git/zip URL]`: Adds an entry to the main repo list for later access.
+*`weel add [package name] [package git/zip URL]`: Adds an entry to your local repo list, for later access.
