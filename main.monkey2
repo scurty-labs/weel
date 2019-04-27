@@ -5,10 +5,15 @@ Namespace APPLICATION_WEEL
 #rem
 	
 	TODO:
+		- add `depth=1` to primary git command
 		- add `weel find [package name]` [locates repo package]
 		- add `weel check [package name]` [checks if target module is installed and/or built correctly]
+		- add `weel updatemods` [updates(rebuilds without -clean flag)all installed modules]
 		- find better command line argument parser(Commands might be subject to change)
 		- auto resolve dependencies from modules and projects via project/module.json file
+		- add commands to easily install/update monkey2 and ted2go
+		- - Probably: `weel install monkey2` AND `weel install ted2go`
+		
 		- support for desktop icons on all host platforms. I.E: Windows, Mac, and Linux
 		- automatic git integration
 		
@@ -58,7 +63,6 @@ Function Main()
 	' --- Get 'Host Specific' Monkey Compiler Path
 	#If __TARGET__="linux"
 		MX2CC = MONKEY_BIN + "mx2cc_linux"
-		'MX2CC = "/home/scott/Apps/monkey/scripts/mx2cc.products/mx2cc_linux"
 	#ElseIf __TARGET__="windows"
 		MX2CC = MONKEY_BIN + "mx2cc_windows"
 	#ElseIf __TARGET__"macos"
