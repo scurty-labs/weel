@@ -16,7 +16,7 @@ End
 Function GitClone:Bool(link:String, dir:String=".")
 	
 	Local code:StpString = New StpString
-	Const cmd:String = "git clone %LINK% %DIR%"
+	Const cmd:String = "git clone --depth 1 %LINK% %DIR%"
 	Local finalLink:String = link + ".git"
 	Local repoName:String = StripDir(link)
 	Local result:Bool = False

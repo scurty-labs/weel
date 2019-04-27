@@ -5,8 +5,8 @@ Namespace APPLICATION_WEEL
 #rem
 	
 	TODO:
-		- add `depth=1` to primary git command
-		- add `weel find [package name]` [locates repo package]
+		*** add `depth=1` to primary git command
+		*** add `weel find [package name]` [locates repo package]
 		- add `weel check [package name]` [checks if target module is installed and/or built correctly]
 		- add `weel updatemods` [updates(rebuilds without -clean flag)all installed modules]
 		- find better command line argument parser(Commands might be subject to change)
@@ -83,6 +83,14 @@ Function Main()
 	CMD.Reg("buildmod", " [module name] [target]~t Rebuilds target module in the 'modules/' folder", Lambda(this:Option)
 		BuildModule(this.GetArg(0), this.GetArg(1))
 	End, 2)
+	
+	CMD.Reg("find", " [package name]~t Searches through the repository for target package", Lambda(this:Option)
+		If(SourceExists(this.GetArg(0)))
+			Print "Package found: " + this.GetArg(0)
+		Else
+			Print "No packages found"
+		Endif
+	End, 1)
 	
 	CMD.Reg("run", " [project name]~t Executes target project on host system", Lambda(this:Option)
 		RunProject(this.GetArg(0))

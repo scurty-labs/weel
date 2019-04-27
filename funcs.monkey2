@@ -8,6 +8,18 @@ Function LoadSources:String[]()
 	Return LoadString("asset::repository.db").Split("~n")
 End
 
+Function SourceExists:Bool(name:String)
+	Local found:Bool = False
+	Local lines:String[] = LoadSources()
+	For Local line:String = Eachin lines
+		Local repo:String[] = line.Split(" ")
+		If repo[0] = name
+			found = True
+		Endif
+	End
+	Return found
+End
+
 Function AppendSourcesDB(name:String, link:String)
 	
 	'NOTE: Use append file functions instead of this(Minimize write operations)
