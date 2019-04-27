@@ -20,6 +20,16 @@ Function SourceExists:Bool(name:String)
 	Return found
 End
 
+Function CheckModule:Bool(name:String)
+	Local ok:Bool = False
+	If(SourceExists(name))
+		For Local file:String = Eachin LoadDir(MONKEY_MODS+"/"+name)
+			If file.Contains(".buildv") Then ok = True
+		Next
+	Endif
+	Return ok
+End
+
 Function AppendSourcesDB(name:String, link:String)
 	
 	'NOTE: Use append file functions instead of this(Minimize write operations)
@@ -31,9 +41,6 @@ End
 
 Function LoadMonkeyMods:String[]()
 	Return LoadDir(MONKEY_MODS)
-End
-
-Function CheckMonkeyMod()
 End
 
 Function GetHost:String()

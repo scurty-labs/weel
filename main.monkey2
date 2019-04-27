@@ -76,7 +76,7 @@ Function Main()
 		NewTemplate(this.GetArg(0), this.GetArg(1))
 	End, 2)
 	
-	CMD.Reg("get", " [package_name]~t Rownloads package into working directory from the local repository", Lambda(this:Option)
+	CMD.Reg("get", " [target name]~t Rownloads package into working directory from the local repository", Lambda(this:Option)
 		GetModule(this.GetArg(0), ".")
 	End, 1)
 	
@@ -84,11 +84,19 @@ Function Main()
 		BuildModule(this.GetArg(0), this.GetArg(1))
 	End, 2)
 	
-	CMD.Reg("find", " [package name]~t Searches through the repository for target package", Lambda(this:Option)
+	CMD.Reg("find", " [module name]~t Searches through the repository for target package", Lambda(this:Option)
 		If(SourceExists(this.GetArg(0)))
-			Print "Package found: " + this.GetArg(0)
+			Print "Module found: " + this.GetArg(0)
 		Else
-			Print "No packages found"
+			Print "No module found"
+		Endif
+	End, 1)
+	
+	CMD.Reg("check", " [module name]~t Determines if target module is built and ready for use", Lambda(this:Option)
+		If(CheckModule(this.GetArg(0)))
+			Print this.GetArg(0) + " - is OK"
+		Else
+			Print this.GetArg(0) + " - no build file found"
 		Endif
 	End, 1)
 	
@@ -96,11 +104,11 @@ Function Main()
 		RunProject(this.GetArg(0))
 	End, 1)
 	
-	CMD.Reg("build", " [path] [target]~t Builds specified application in debug mode", Lambda(this:Option)
+	CMD.Reg("build", " [path] [project]~t Builds specified application in debug mode", Lambda(this:Option)
 		BuildProject(this.GetArg(0), this.GetArg(1), False)
 	End, 2)
 	
-	CMD.Reg("buildr", " [path] [target]~t Builds specified application in release mode", Lambda(this:Option)
+	CMD.Reg("buildr", " [path] [project]~t Builds specified application in release mode", Lambda(this:Option)
 		BuildProject(this.GetArg(0), this.GetArg(1), True)
 	End, 2)
 	
