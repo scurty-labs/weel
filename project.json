@@ -6,6 +6,8 @@
 	"preDebug":"",
 	"postDebug":"",
 	
+	"depends":["std", "libc", "m2stp"],
+	
 	"preRelease":"",
 	"postRelease":"./install.sh"
 }

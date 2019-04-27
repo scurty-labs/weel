@@ -5,9 +5,8 @@ Namespace APPLICATION_WEEL
 #rem
 	
 	TODO:
-		- add `weel updatemods` [updates(rebuilds without -clean flag)all installed modules]
 		- find better command line argument parser(Commands might be subject to change)
-		- auto resolve dependencies from modules and projects via project/module.json file
+		* auto resolve dependencies from modules and projects via project/module.json file
 		- add commands to easily install/update monkey2 and ted2go
 		- - Probably: `weel install monkey2` AND `weel install ted2go`
 		
@@ -40,6 +39,7 @@ Namespace APPLICATION_WEEL
 #Import "install"
 #Import "add"
 #Import "download"
+#Import "module"
 
 Using std..
 Using argparse..
@@ -50,6 +50,12 @@ Global MONKEY_PATH:String = AppDir() + "../"
 Global MONKEY_BIN:String = MONKEY_PATH + "bin/"
 Global MONKEY_MODS:String = MONKEY_PATH + "modules"
 Global MONKEY_SCRIPTS:String = AppDir() + "../scripts/"
+
+' - GitHub Links
+Global MONKEY2_GIT:String = "https://github.com/blitz-research/monkey2.git"
+Global TED2GO_GIT:String = "https://github.com/engor/Ted2Go.git"
+
+' - Location of Compiler
 Global MX2CC:String
 
 ' WEEL ENVIRONMENT CONFIG
@@ -122,13 +128,18 @@ Function Main()
 	End, 2)
 	
 	' --- UPDATING MONKEY MODULE BUILDS ---
-	CMD.Reg("updatemods", "Calls scripts/updatemods.sh/bat", Lambda(this:Option)
-		
-		If(GetHost() <> "windows")
-			libc.system(MX2CC + " makemods -config=release && " + MX2CC + " makemods -config=debu")
-		Endif
-		
-	End, 0)
+	CMD.Reg("updatemods", " [platform]~tUpdates build files in module directory without '-clean'", Lambda(this:Option)
+		libc.system(MX2CC + " makemods -target="+this.GetArg(0)+" -config=release && " + MX2CC + " makemods -target="+this.GetArg(0)+" -config=debug")
+	End, 1)
+	
+	CMD.Reg("rebuildmods", " [platform]~tCompletely rebuilds all modules.", Lambda(this:Option)
+		libc.system(MX2CC + " makemods -clean -target="+this.GetArg(0)+" -config=release && " + MX2CC + " makemods -clean -target="+this.GetArg(0)+" -config=debug")
+	End, 1)
+	
+	#rem
+	$mx2cc makemods -clean -target=desktop -config=release
+	$mx2cc makemods -clean -target=desktop -config=debug
+	#end
 	
 	' --- HELP COMMANDS ---
 	Local helpCMD:Void( Option ) = Lambda(this:Option)

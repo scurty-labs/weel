@@ -3,6 +3,8 @@
 	"name":"%NAME%",
 	"type":"console",
 	
+	"depends":["std", "libc"],
+	
 	"preDebug":"",
 	"postDebug":"",
 	

@@ -22,7 +22,7 @@ End
 
 Function CheckModule:Bool(name:String)
 	Local ok:Bool = False
-	If(SourceExists(name))
+	If(FileExists(MONKEY_MODS+"/"+name))
 		For Local file:String = Eachin LoadDir(MONKEY_MODS+"/"+name)
 			If file.Contains(".buildv") Or file.Contains("module.json") Then ok = True
 		Next

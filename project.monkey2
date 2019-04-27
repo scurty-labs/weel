@@ -8,7 +8,7 @@ Class ProjectConf
 		"name":"%NAME%", // Executable file name
 		"type":"gui", // Type of application being worked on (might be useful in the future)
 		
-		"dependencies":["std", "libc"],
+		"depends":["std", "libc"],
 		
 		// Optional Post/Pre | Debug/Release Shell Commands/Scripts
 		"preDebug":"",
@@ -23,6 +23,7 @@ Class ProjectConf
 	Field MainFileName:String
 	Field Name:String
 	Field Type:String
+	Field Depends:Stack<JsonValue>
 	Field PreDebug:String
 	Field PostDebug:String
 	Field PreRelease:String
@@ -40,6 +41,7 @@ Class ProjectConf
 			MainFileName = obj["main"].ToString()
 			Name = obj["name"].ToString()
 			Type = obj["type"].ToString()
+			Depends = obj["depends"].ToArray()
 			
 			' Optional Structures
 			PreDebug = obj["preDebug"].ToString()
