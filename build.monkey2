@@ -28,20 +28,22 @@ Function BuildProject(path:String, target:String, release:Bool)
 	
 	' Resolve Depends
 	Print "Checking dependencies..."
-	For Local lib:JsonValue = Eachin proj.Depends
-		Local module:String = lib.ToString()
-		If(CheckModule(module))
-			Print module + " - OK"
-		Else
-			Print module + " - Module not found!"
-			If(SourceExists(module))
-				InstallModule(module)
+	If(proj.Depends.Length <> 0)
+		For Local lib:JsonValue = Eachin proj.Depends
+			Local module:String = lib.ToString()
+			If(CheckModule(module))
+				Print module + " - OK"
 			Else
-				Print module + "- No installation candidate found!"
-				Return
+				Print module + " - Module not found!"
+				If(SourceExists(module))
+					InstallModule(module)
+				Else
+					Print module + "- No installation candidate found!"
+					Return
+				Endif
 			Endif
-		Endif
-	Next
+		Next
+	Endif
 	
 	' Assemble command...
 	Local cmd:String = MX2CC + " makeapp -apptype=%TYPE% -build -config=%MODE% -target=%TARGET% -product=" + CurrentDir() + "%NAME%" + "/" + "%MAIN%" + ".products/%TARGET2%/%NAME% %PATH%"

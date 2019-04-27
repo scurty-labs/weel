@@ -3,6 +3,8 @@
 	"name":"%NAME%",
 	"type":"gui",
 	
+	"depends":["std", "libc", "mojo", "mojo3d"],
+	
 	"preDebug":"",
 	"postDebug":"",
 	
