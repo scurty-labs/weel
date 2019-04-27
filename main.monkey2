@@ -5,9 +5,6 @@ Namespace APPLICATION_WEEL
 #rem
 	
 	TODO:
-		*** add `depth=1` to primary git command
-		*** add `weel find [package name]` [locates repo package]
-		- add `weel check [package name]` [checks if target module is installed and/or built correctly]
 		- add `weel updatemods` [updates(rebuilds without -clean flag)all installed modules]
 		- find better command line argument parser(Commands might be subject to change)
 		- auto resolve dependencies from modules and projects via project/module.json file
@@ -52,7 +49,7 @@ Using m2stp..
 Global MONKEY_PATH:String = AppDir() + "../"
 Global MONKEY_BIN:String = MONKEY_PATH + "bin/"
 Global MONKEY_MODS:String = MONKEY_PATH + "modules"
-Global MONKEY_SCRIPTS:String = MONKEY_PATH + "scripts/"
+Global MONKEY_SCRIPTS:String = AppDir() + "../scripts/"
 Global MX2CC:String
 
 ' WEEL ENVIRONMENT CONFIG
@@ -123,6 +120,15 @@ Function Main()
 	CMD.Reg("add", " [name] [.git/.zip URL]~t Adds new git/zip repository entry to locaol sources database.", Lambda(this:Option)
 		AddRepo(this.GetArg(0), this.GetArg(1))
 	End, 2)
+	
+	' --- UPDATING MONKEY MODULE BUILDS ---
+	CMD.Reg("updatemods", "Calls scripts/updatemods.sh/bat", Lambda(this:Option)
+		
+		If(GetHost() <> "windows")
+			libc.system(MX2CC + " makemods -config=release && " + MX2CC + " makemods -config=debu")
+		Endif
+		
+	End, 0)
 	
 	' --- HELP COMMANDS ---
 	Local helpCMD:Void( Option ) = Lambda(this:Option)
