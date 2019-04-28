@@ -4,7 +4,7 @@
 	"type":"console",
 	
 	"preDebug":"",
-	"postDebug":"",
+	"postDebug":"./install.sh",
 	
 	"depends":["std", "libc", "m2stp"],
 	

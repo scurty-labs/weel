@@ -28,6 +28,8 @@ Function BuildProject(path:String, target:String, release:Bool)
 	
 	' Resolve Depends
 	Print "Checking dependencies..."
+	CheckDependencies(proj.Depends)
+	#rem
 	If(proj.Depends.Length <> 0)
 		For Local lib:JsonValue = Eachin proj.Depends
 			Local module:String = lib.ToString()
@@ -44,6 +46,7 @@ Function BuildProject(path:String, target:String, release:Bool)
 			Endif
 		Next
 	Endif
+	#end
 	
 	' Assemble command...
 	Local cmd:String = MX2CC + " makeapp -apptype=%TYPE% -build -config=%MODE% -target=%TARGET% -product=" + CurrentDir() + "%NAME%" + "/" + "%MAIN%" + ".products/%TARGET2%/%NAME% %PATH%"

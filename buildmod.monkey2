@@ -7,12 +7,25 @@ Function BuildModule(name:String, target:String)
 	code.SetVar("TARGET", target)
 	code.SetVar("NAME", name)
 	
-	Print "Locating Module..."
-	Print MONKEY_MODS+"/"+name
-
-	If(FileExists(MONKEY_MODS+"/"+name))
-		Print "Attempting to build "+name+"..."
-		libc.system(code.Format(cmd))
+	'Print MONKEY_MODS+"/"+name
+	
+	Print "Searching..."
+	Local path:String = MONKEY_MODS+"/"+name
+	If(FileExists(path))
+		Local module:ModuleConf = New ModuleConf()
+		If(FileExists(path+"/module.json"))
+			
+			module.Load(path+"/module.json")
+			
+			CheckDependencies(module.Depends)
+			
+			Print "Attempting to build "+name+"..."
+			libc.system(code.Format(cmd))
+			
+		Else
+			Print "Can't find "
+		Endif
+		
 	Else
 		Print "Module '"+name+"' not found. Folder name must be the same as Module name."
 	End

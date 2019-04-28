@@ -11,11 +11,13 @@ End
 Function SourceExists:Bool(name:String)
 	Local found:Bool = False
 	Local lines:String[] = LoadSources()
-	For Local line:String = Eachin lines
-		Local repo:String[] = line.Split(" ")
-		If repo[0] = name
-			found = True
-		Endif
+	If(lines.Length <> 0)
+		For Local line:String = Eachin lines
+			Local repo:String[] = line.Split(" ")
+			If repo[0] = name
+				found = True
+			Endif
+		End
 	End
 	Return found
 End
@@ -24,7 +26,7 @@ Function CheckModule:Bool(name:String)
 	Local ok:Bool = False
 	If(FileExists(MONKEY_MODS+"/"+name))
 		For Local file:String = Eachin LoadDir(MONKEY_MODS+"/"+name)
-			If file.Contains(".buildv") Or file.Contains("module.json") Then ok = True
+			If file.Contains(".buildv") Then ok = True
 		Next
 	Endif
 	Return ok
@@ -41,6 +43,35 @@ End
 
 Function LoadMonkeyMods:String[]()
 	Return LoadDir(MONKEY_MODS)
+End
+
+Function ResolveDependency:Bool(name:String)
+	Local ok:Bool = False
+	If(SourceExists(name))
+		InstallModule(name)
+		ok = True
+	Endif
+	Return ok
+End
+
+Function CheckDependencies(libs:Stack<JsonValue>)
+	If(libs.Length <> 0)
+		For Local lib:JsonValue = Eachin libs
+			Local depend:String = lib.ToString()
+			If(CheckModule(depend))
+				Print depend + " - OK"
+			Else
+				Print depend + " not found!"
+				If( ResolveDependency(depend) )
+					Print depend + "- OK"
+				Else
+					Print "Couldn't resolve '"+depend+"'"
+				Endif
+			Endif
+		Next
+	Else
+		Print "Empty depends..."
+	Endif
 End
 
 Function GetHost:String()

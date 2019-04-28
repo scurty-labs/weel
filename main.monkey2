@@ -6,7 +6,6 @@ Namespace APPLICATION_WEEL
 	
 	TODO:
 		- find better command line argument parser(Commands might be subject to change)
-		* auto resolve dependencies from modules and projects via project/module.json file
 		- add commands to easily install/update monkey2 and ted2go
 		- - Probably: `weel install monkey2` AND `weel install ted2go`
 		
@@ -16,6 +15,7 @@ Namespace APPLICATION_WEEL
 	LIMITATIONS:
 		- github master.zip files is not supported yet
 		- libcurl.so/dll is needed for proper http/s requests
+		- can't install monkey2/ted2go just yet
 
 #end
 
@@ -135,11 +135,6 @@ Function Main()
 	CMD.Reg("rebuildmods", " [platform]~tCompletely rebuilds all modules.", Lambda(this:Option)
 		libc.system(MX2CC + " makemods -clean -target="+this.GetArg(0)+" -config=release && " + MX2CC + " makemods -clean -target="+this.GetArg(0)+" -config=debug")
 	End, 1)
-	
-	#rem
-	$mx2cc makemods -clean -target=desktop -config=release
-	$mx2cc makemods -clean -target=desktop -config=debug
-	#end
 	
 	' --- HELP COMMANDS ---
 	Local helpCMD:Void( Option ) = Lambda(this:Option)
