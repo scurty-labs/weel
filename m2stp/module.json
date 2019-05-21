@@ -1,0 +1,8 @@
+{
+	"module":"m2stp",
+	"about":"Simple string processing",
+	"author":"Hezkore",
+	"version":"1.0.0",
+	"support":"http://hezkore.com",
+	"depends":[]
+}
