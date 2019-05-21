@@ -1,2 +1,0 @@
-STP version is v%stP_version%
-Next version will be v$add(%stp_version%,1)
