@@ -1,18 +1,18 @@
 # Weel Package Manager
 
-Weel is a WIP 'Package Manager' for the Monkey2 Programming Language. Allowing you to easily download new modules, build projects/modules, and generate simple project templates.
+Weel is a 'Package Manager' for the Monkey2 Programming Language. Allowing you to easily download new modules, build projects/modules, and generate simple project templates and update/setup Monkey2 from source.
 
-## Beta Installation:
+## Weel Installation:
 
-*First, make sure you have `git` installed.*
+*First, make sure you have 'git' installed.*
 
-*Clone this repository and build it in Ted2Go as a console application named `weel`, move the contents of main.products into your `monkey2/bin` Installation folder*
+*Clone this repository and build it in Ted2Go(or using 'weel buildr weel <platform>') as a console application named `weel`, move the contents of 'weel.products/' into your 'monkey2/bin' Installation folder*
 
-*Finally, be sure to add the full `monkey2/bin` path to your `PATH` environment variable so you can execute `weel` and `mx2cc` from the terminal/console.*
+*Next, add the full `monkey2/bin` path to your `PATH` environment variable so you can execute `weel` and `mx2cc` using the terminal/console from anywhere.*
 
 # USAGE:
 
-*`weel -h`: To view the help page.*
+*`weel -h`: To view the help page. Weel can do more than what's listed below.*
 
 ### --- Creating new Project
 
@@ -34,7 +34,7 @@ Weel is a WIP 'Package Manager' for the Monkey2 Programming Language. Allowing y
 
 ### --- Installing Modules
 
-*`weel -i [module name]`: Will automatically download and install target module into `monkey2/modules` directory.*
+*`weel install [module name]`: Will automatically download target module into your `monkey2/modules` directory.*
 
 ### --- Building Modules
 
@@ -61,7 +61,3 @@ Weel is a WIP 'Package Manager' for the Monkey2 Programming Language. Allowing y
 * `wasm`
 
 * `emscripten`
-
-### --- Adding Modules to Repository
-
-*`weel add [package name] [package git/zip URL]`: Adds an entry to your local repo list, for later access.
