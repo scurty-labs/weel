@@ -1,4 +1,4 @@
-Namespace %APPLICATION_NAME%
+Namespace APPLICATION_%APPLICATION_NAME%
 
 #Import "<std>"
 #Import "<mojo>"

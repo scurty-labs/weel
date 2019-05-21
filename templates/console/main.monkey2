@@ -1,4 +1,4 @@
-Namespace APPLICATION
+Namespace APPLICATION_%APPLICATION_NAME%
 
 #Import "<std>"
 

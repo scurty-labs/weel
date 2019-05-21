@@ -1,7 +1,0 @@
-{
-	"module":"argparse",
-	"about":"Easy commandline argument processing",
-	"author":"Scurty",
-	"version":"0.1.0",
-	"depends":["libc","std"]
-}

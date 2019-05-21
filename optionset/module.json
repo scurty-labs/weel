@@ -1,0 +1,7 @@
+{
+	"module":"optionset",
+	"about":"Simple commandline argument parsing.",
+	"author":"Scurty",
+	"version":"0.1.4",
+	"depends":["libc","std"]
+}

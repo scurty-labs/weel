@@ -1,0 +1,8 @@
+{
+	"module":"m2ci",
+	"about":"Monkey2 Compiler Interface",
+	"author":"Scurty",
+	"version":"1.0.0",
+	"support":"N/A",
+	"depends":["std", "libc"]
+}

@@ -3,10 +3,10 @@
 	"name":"weel",
 	"type":"console",
 	
-	"preDebug":"",
-	"postDebug":"./install.sh",
+	"depends":["std", "libc", "m2conio"],
 	
-	"depends":["std", "libc", "m2stp"],
+	"preDebug":"",
+	"postDebug":"",
 	
 	"preRelease":"",
 	"postRelease":"./install.sh"

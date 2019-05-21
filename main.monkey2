@@ -1,153 +1,266 @@
-' Written By: Scott Rhine (scurty)
-
 Namespace APPLICATION_WEEL
 
-#rem
-	
-	TODO:
-		- find better command line argument parser(Commands might be subject to change)
-		- add commands to easily install/update monkey2 and ted2go
-		- - Probably: `weel install monkey2` AND `weel install ted2go`
-		
-		- support for desktop icons on all host platforms. I.E: Windows, Mac, and Linux
-		- automatic git integration
-		
-	LIMITATIONS:
-		- github master.zip files is not supported yet
-		- libcurl.so/dll is needed for proper http/s requests
-		- can't install monkey2/ted2go just yet
+' --- External
 
-#end
-
-' - External
 #Import "<std>"
 
-' - Internal
-#Import "repository.db"
-#Import "/templates/@/templates/"
 
-#Import "argparse/argparse"
+' --- Internal
+
 #Import "m2stp/m2stp"
+#Import "m2conio/m2conio"
 
+#Import "optionset/optionset"
+#Import "m2ci/m2ci"
+#Import "m2git/m2git"
 #Import "funcs"
+
+#Import "/templates/@/templates/"
+#Import "templates"
+
+#Import "sources.json"
+
+#Import "package"
 #Import "project"
-#Import "new"
-#Import "buildmod"
-#Import "build"
-#Import "run"
-#Import "get"
-#Import "install"
-#Import "add"
-#Import "download"
 #Import "module"
 
+' --- ---
+
 Using std..
-Using argparse..
-Using m2stp..
+Using m2ci..
+Using m2git..
+Using m2conio..
 
-' MONKEY ENVIRONMENT CONFIG
-Global MONKEY_PATH:String = AppDir() + "../"
-Global MONKEY_BIN:String = MONKEY_PATH + "bin/"
-Global MONKEY_MODS:String = MONKEY_PATH + "modules"
-Global MONKEY_SCRIPTS:String = AppDir() + "../scripts/"
+Const APPTITLE:String = "weel"
+Const VERSION:String = "0.85a"
 
-' - GitHub Links
-Global MONKEY2_GIT:String = "https://github.com/blitz-research/monkey2.git"
-Global TED2GO_GIT:String = "https://github.com/engor/Ted2Go.git"
+Global PROC:M2CI
 
-' - Location of Compiler
-Global MX2CC:String
-
-' WEEL ENVIRONMENT CONFIG
-Global TEMPLATE_DIR:String = "asset::templates/"
-
-Function Main()
-
-	' --- Get 'Host Specific' Monkey Compiler Path
-	#If __TARGET__="linux"
-		MX2CC = MONKEY_BIN + "mx2cc_linux"
-	#ElseIf __TARGET__="windows"
-		MX2CC = MONKEY_BIN + "mx2cc_windows"
-	#ElseIf __TARGET__"macos"
-		MX2CC = MONKEY_BIN + "mx2cc_macos"
-	#Endif
+Function Main:Void()
 	
-	' --- Initialize Commands ---
-	Local CMD:OptionSet = New OptionSet(AppArgs())
+	Local OPTIONS:OptionSet = New OptionSet(AppArgs())
+	PROC = New M2CI()
 	
-	CMD.Reg("new", " [type] [name]~t Generates a new project folder structure.~nTypes: empty, module, console, 2d, 3d, and gui", Lambda(this:Option)
-		NewTemplate(this.GetArg(0), this.GetArg(1))
-	End, 2)
+	' --- BEGIN OPTIONS ---
 	
-	CMD.Reg("get", " [target name]~t Rownloads package into working directory from the local repository", Lambda(this:Option)
-		GetModule(this.GetArg(0), ".")
-	End, 1)
+	OPTIONS.Add("version", 0, Lambda(this:Option)
+		Print APPTITLE + " version: " + VERSION
+	End)
 	
-	CMD.Reg("buildmod", " [module name] [target]~t Rebuilds target module in the 'modules/' folder", Lambda(this:Option)
-		BuildModule(this.GetArg(0), this.GetArg(1))
-	End, 2)
 	
-	CMD.Reg("find", " [module name]~t Searches through the repository for target package", Lambda(this:Option)
-		If(SourceExists(this.GetArg(0)))
-			Print "Module found: " + this.GetArg(0)
-		Else
-			Print "No module found"
+	' - MODULE MANAGEMENT -
+	
+	OPTIONS.Add("rebuildmod", 2, Lambda(this:Option)
+		'PROC.BuildModules(this[0], False, False, this[1])
+		'PROC.BuildModules(this[0], False, True, this[1])
+		WeelBuildModule(this[0], True, this[1])
+		PROC.BuildDocs(this[0])
+	End)
+	
+	OPTIONS.Add("buildmod", 2, Lambda(this:Option)
+		'PROC.BuildModules(this[0], False, False, this[1])
+		'PROC.BuildModules(this[0], False, True, this[1])
+		WeelBuildModule(this[0], False, this[1])
+		PROC.BuildDocs(this[0])
+	End)
+	
+	' Build ALL Modules in Release and Debug Mode
+	OPTIONS.Add("buildmods", 1, Lambda(this:Option)
+		PROC.BuildModules("", False, False, this[1])
+		PROC.BuildModules("", False, True, this[1])
+	End)
+	
+	' *Rebuild* ALL Modules in Release and Debug Mode
+	OPTIONS.Add("rebuildmods", 1, Lambda(this:Option)
+		PROC.BuildModules("", True, False, this[1])
+		PROC.BuildModules("", True, True, this[1])
+	End)
+	
+	' Displays Module Information
+	OPTIONS.Add("info", 1, Lambda(this:Option)
+		If(ModuleInstalled(this[0]))
+			Local conf:ModuleConf = New ModuleConf()
+			conf.LoadJson(AppDir() + MODULE_FOLDER + "/" + this[0])
+			conf.PrintInfo()
 		Endif
-	End, 1)
+	End)
 	
-	CMD.Reg("check", " [module name]~t Determines if target module is built and ready for use", Lambda(this:Option)
-		If(CheckModule(this.GetArg(0)))
-			Print this.GetArg(0) + " - is OK"
+	' Checks the existence and validity(if it's build) of target module
+	OPTIONS.Add("check", 1, Lambda(this:Option)
+		If(ModuleInstalled(this[0]))
+			Print "Module '"+this[0]+"' is installed."
+			Local conf:ModuleConf = New ModuleConf()
+			conf.LoadJson(AppDir() + MODULE_FOLDER + "/" + this[0])
+			If( CheckDependencies(conf.Depends, this[0]) )
+				Print "No missing dependencies."
+			Else
+				Print "Missing dependency."
+			Endif
 		Else
-			Print this.GetArg(0) + " - no build file found"
+			Print "Module is not Installed."
 		Endif
-	End, 1)
+	End)
 	
-	CMD.Reg("run", " [project name]~t Executes target project on host system", Lambda(this:Option)
-		RunProject(this.GetArg(0))
-	End, 1)
 	
-	CMD.Reg("build", " [path] [project]~t Builds specified application in debug mode", Lambda(this:Option)
-		BuildProject(this.GetArg(0), this.GetArg(1), False)
-	End, 2)
+	' - PROJECT COMMANDS -
 	
-	CMD.Reg("buildr", " [path] [project]~t Builds specified application in release mode", Lambda(this:Option)
-		BuildProject(this.GetArg(0), this.GetArg(1), True)
-	End, 2)
+	' Build Project in Debug Mode
+	OPTIONS.Add("build", 2, Lambda(this:Option)
+		WeelBuildProject(this[0], False, False, this[1])
+	End)
 	
-	' --- INSTALL COMMANDS ---
-	Local installCMD:Void( Option ) = Lambda(this:Option)
-		InstallModule(this.GetArg(0))
+	' Build Project in Release Mode
+	OPTIONS.Add("buildr", 2, Lambda(this:Option)
+		WeelBuildProject(this[0], False, True, this[1])
+	End)
+	
+	
+	' - DOCUMENTATION COMMANDS -
+	
+	' Build *ALL* Module Documentation
+	OPTIONS.Add("builddocs", 0, Lambda(this:Option)
+		PROC.BuildDocs()
+	End)
+	
+	' Build Module Documentation for a singular Module or a set of Modules
+	OPTIONS.Add("builddoc", 1, Lambda(this:Option)
+		PROC.BuildDocs(this[0])
+	End)
+	
+	
+	' - TEMPLATE GENERATION -
+	
+	OPTIONS.Add("new", 2, Lambda(this:Option)
+		GenerateTemplate(this[0], this[1])
+	End)
+	
+	
+	' - PACKAGE MANAGEMENT COMMANDS -
+	
+	OPTIONS.Add("get", 1, Lambda(this:Option)
+		GetModule(LoadSources(), this[0], "")
+	End)
+	
+	OPTIONS.Add("install", 1, Lambda(this:Option)
+		GetModule(LoadSources(), this[0], AppDir()+MODULE_FOLDER)
+	End)
+
+	OPTIONS.Add("reinstall", 1, Lambda(this:Option)
+		Local oldMod:String = AppDir()+MODULE_FOLDER+"/"+this[0]
+		If(FileExists(oldMod)) Then DeleteDir(oldMod, True)
+		GetModule(LoadSources(), this[0], AppDir()+MODULE_FOLDER)
+	End)
+	
+	' - MONKEY MANAGEMENT -
+	OPTIONS.Add("setup", 0, Lambda(this:Option)
+
+		Local curDir:String = CurrentDir()
+		ChangeDir(AppDir()+"../")
+		
+		#If __TARGET__="linux"
+		
+			libc.system("chmod +x bin/mx2cc_linux && echo ~qActivating compiler.~q")
+			libc.system("chmod +x scripts/*.sh && echo ~qActivating shell scripts.~q")
+			
+		#ElseIf __TARGET__"macos"
+		
+			libc.system("chmod 755 bin/mx2cc_linux && echo ~qActivating compiler.~q")
+			libc.system("chmod 755 scripts/*.sh && echo ~qActivating shell scripts.~q")
+			
+		#Endif
+		
+		' UPDATE BIN/MODULES
+		PROC.RebuildMX2CC(True)
+		
+		'PROC.BuildModules("", True, False, PROC.GetHost())
+		'PROC.BuildModules("", True, True, PROC.GetHost())
+		PROC.BuildDocs()
+
+		ChangeDir(CurrentDir())
+		
+	End)
+
+
+	OPTIONS.Add("update", 0, Lambda(this:Option)
+	
+		
+		If(Not FileExists(AppDir()+"tmp"))
+			CreateDir(AppDir()+"tmp", True, True)
+		Endif
+		
+		If(FileExists(AppDir()+"tmp/monkey2"))
+			DeleteDir(AppDir()+"tmp/monkey2", True)
+		Endif
+		
+		' GET MONKEY2 GIT REPO
+		ChangeDir(AppDir()+"tmp")
+		GitBranch("https://github.com/blitz-research/monkey2", "monkey2")
+		
+		' TRANSFER NEW FILES
+		ChangeDir(AppDir()+"../../")
+		CopyDir("bin/tmp/monkey2", "monkey", True)
+		
+		ChangeDir(AppDir())
+		
+		' UPDATE BIN/MODULES
+		PROC.RebuildMX2CC(True)
+		
+		PROC.BuildModules("", True, False, PROC.GetHost())
+		PROC.BuildModules("", True, True, PROC.GetHost())
+		PROC.BuildDocs()
+		
+		' Git PULL Ted2go
+		
+		If(FileExists(AppDir()+"tmp/monkey2"))
+			DeleteDir(AppDir()+"tmp/monkey2", True)
+		Endif
+		
+	End)
+	
+	
+	
+	' - HELP/MANUAL -
+	
+	Local _help:Void(Option) = Lambda(this:Option)
+		
+		Print "usage: weel [--help] [new <template> <name>] [get <package>] [install <package>] [reinstall <package>]"
+		Print "            [build <project> <platform>] [buildr <project> <platform>] [buildmod <module> <platform>]"
+		Print "            [buildmods] [rebuildmod <module> <platform>] [rebuildmods] [info <module>] [check <module>]"
+		Print "            [builddocs] [builddoc <module>] [setup] [update]"
+		Print ""
+		
+		Print "<template> = [empty] [console] [gui] [2d] [3d] [module]"
+		Print "<platform> = [windows] [macos] [linux] [android] [ios] [wasm] [emscripten]"
+		
+		Print "~n~n[setup] - Builds Monkey2 from source, activates 'scripts/' folder, builds all modules/documentation."
+		Print "~n[update] - Updates Monkey2 to the latest version and rebuilds mx2cc, all modules and documentation."
+		Print "~n[new <template> <name>] - Creates a new project folder and project configuration file."
+		Print "~n[get <package>] - Downloads a package from the repository into your working directory."
+		Print "~n[install <package>] - Downloads target module package into the main 'modules' folder."
+		Print "~n[reinstall <package>] - Removes old module and re-downloads target module package."
+		Print "~n[build <project> <platform>] - Builds project in *debug* mode for specified platform."
+		Print "~n[buildr <project> <platform>] - Builds target project in *release* mode."
+		Print "~n[buildmod <module> <platform>] - Builds module and its documentation in debug and release mode."
+		Print "~n[buildmods] - Builds all installed modules for target platform"
+		Print "~n[rebuildmod <module> <platform>] - Cleans and builds target module."
+		Print "~n[rebuildmods] - Cleans and rebuilds *ALL* existing modules."
+		Print "~n[builddoc <module>] - Assemles documentation for given module."
+		Print "~n[builddocs - Assemles *ALL* documentation for *ALL* modules."
+		Print "~n[check <module>] - Checks target modules existence and validity."
+		Print "~n[info <module>] - Displays module information from the modules conf."
+		Print "~n[update] - Updates Monkey2 from GIT and rebuilds mx2cc, all modules, and documentation."
+
+		
 	End
-	Local installUsage:String = " [module name]~t Installs module from repository to '*/modules'"
-	CMD.Reg("install", installUsage, installCMD, 1)
-	CMD.Reg("-i", installUsage, installCMD, 1)
+	OPTIONS.Add("help", 0, _help)
+	OPTIONS.Add("-h", 0, _help)
 	
-	CMD.Reg("add", " [name] [.git/.zip URL]~t Adds new git/zip repository entry to locaol sources database.", Lambda(this:Option)
-		AddRepo(this.GetArg(0), this.GetArg(1))
-	End, 2)
+	' --- END OPTIONS ---
 	
-	' --- UPDATING MONKEY MODULE BUILDS ---
-	CMD.Reg("updatemods", " [platform]~tUpdates build files in module directory without '-clean'", Lambda(this:Option)
-		libc.system(MX2CC + " makemods -target="+this.GetArg(0)+" -config=release && " + MX2CC + " makemods -target="+this.GetArg(0)+" -config=debug")
-	End, 1)
-	
-	CMD.Reg("rebuildmods", " [platform]~tCompletely rebuilds all modules.", Lambda(this:Option)
-		libc.system(MX2CC + " makemods -clean -target="+this.GetArg(0)+" -config=release && " + MX2CC + " makemods -clean -target="+this.GetArg(0)+" -config=debug")
-	End, 1)
-	
-	' --- HELP COMMANDS ---
-	Local helpCMD:Void( Option ) = Lambda(this:Option)
-		CMD.PrintHelp()
-	End
-	CMD.Reg("help", " Displays usage", helpCMD, 0)
-	CMD.Reg("-h", " Displays usage", helpCMD, 0)
-	
-	' - DEFAULT | If any arguments exist or not, just display the help text
 	If AppArgs().Length > 1
-		CMD.Parse()
+		OPTIONS.Parse()
 	Else
-		CMD.PrintHelp()
+		_help( New Option("", 0, _help) )
 	End
 	
 End
