@@ -14,6 +14,10 @@ Weel is a 'Package Manager' for the Monkey2 Programming Language. Allowing you t
 
 *`weel -h`: To view the help page. Weel can do more than what's listed below.*
 
+### --- Updating Monkey2
+
+*`weel update`* : Updates Monkey2 to the latest version and rebuilds it. (May take a while...)
+
 ### --- Creating new Project
 
 *`weel new [type] [project name]`: Gerates a new project template with a premade `project.json` or `module.json` file included.*
