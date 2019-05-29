@@ -173,9 +173,9 @@ Function Main:Void()
 			#ElseIf __TARGET__"windows"
 			
 				' Download 'mingw' into 'devtools'
-				DownloadFile("http://monkeycoder.co.nz/get-file/?file=i686-6.2.0-posix-dwarf-rt_v5-rev1.exe", "devtools/")
-				PROC.MX2CC = CurrentDir() + "bin/mx2cc_windows"
-				
+				'DownloadFile("http://monkeycoder.co.nz/get-file/?file=i686-6.2.0-posix-dwarf-rt_v5-rev1.exe", "devtools/")
+				'PROC.MX2CC = CurrentDir() + "bin/mx2cc_windows"
+				Print "This feature doesn't support Windows yet."
 				
 			#Endif
 			
