@@ -11,3 +11,15 @@ Function ElementExists<T>:Bool(collection:T[], element:T)
 	Next
 	Return result
 End
+
+Function DownloadFile(link:String, destination:String)
+
+	#if __HOSTOS__="macos"
+		Local cmd:="curl -s -o ~q"+destination+"~q -data-binary ~q"+link+"~q"
+	#else
+		Local cmd:="wget -O ~q"+destination+"~q ~q"+link+"~q"
+	#endif
+	
+	libc.system(cmd)
+	
+End

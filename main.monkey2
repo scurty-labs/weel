@@ -142,7 +142,50 @@ Function Main:Void()
 	End)
 	
 	OPTIONS.Add("install", 1, Lambda(this:Option)
-		GetModule(LoadSources(), this[0], AppDir()+MODULE_FOLDER)
+		If(this[0] <> "monkey2")
+			GetModule(LoadSources(), this[0], AppDir()+MODULE_FOLDER)
+		Else
+			
+			' --- Download and Install 'Monkey2' ---
+			
+			' GET MONKEY2 GIT REPO
+			GitBranch("https://github.com/blitz-research/monkey2", "monkey2")
+			
+			
+			Local curDir:String = CurrentDir()
+			PROC.MX2CC = CurrentDir() + "/monkey2/bin/mx2cc_linux"
+			ChangeDir("monkey2/")
+			
+			#If __TARGET__="linux"
+			
+				libc.system("chmod 755 bin/mx2cc_linux && echo ~qActivating compiler.~q")
+				libc.system("chmod 755 scripts/*.sh && echo ~qActivating shell scripts.~q")
+				
+				PROC.MX2CC = CurrentDir() + "bin/mx2cc_linux"
+				
+			#ElseIf __TARGET__"macos"
+			
+				libc.system("chmod 755 bin/mx2cc_macos && echo ~qActivating compiler.~q")
+				libc.system("chmod 755 scripts/*.sh && echo ~qActivating shell scripts.~q")
+				
+				PROC.MX2CC = CurrentDir() + "bin/mx2cc_macos"
+				
+			#ElseIf __TARGET__"windows"
+			
+				' Download 'mingw' into 'devtools'
+				DownloadFile("http://monkeycoder.co.nz/get-file/?file=i686-6.2.0-posix-dwarf-rt_v5-rev1.exe", "devtools/")
+				PROC.MX2CC = CurrentDir() + "bin/mx2cc_windows"
+				
+				
+			#Endif
+			
+			PROC.RebuildMX2CC(True)
+			PROC.BuildModules("", True, False, PROC.GetHost())
+			PROC.BuildModules("", True, True, PROC.GetHost())
+			PROC.BuildDocs()
+			ChangeDir(curDir)
+			
+		Endif
 	End)
 
 	OPTIONS.Add("reinstall", 1, Lambda(this:Option)
@@ -151,8 +194,11 @@ Function Main:Void()
 		GetModule(LoadSources(), this[0], AppDir()+MODULE_FOLDER)
 	End)
 	
+	
 	' - MONKEY MANAGEMENT -
+	
 	OPTIONS.Add("setup", 0, Lambda(this:Option)
+		
 
 		Local curDir:String = CurrentDir()
 		ChangeDir(AppDir()+"../")
@@ -164,19 +210,18 @@ Function Main:Void()
 			
 		#ElseIf __TARGET__"macos"
 		
-			libc.system("chmod 755 bin/mx2cc_linux && echo ~qActivating compiler.~q")
+			libc.system("chmod 755 bin/mx2cc_macos && echo ~qActivating compiler.~q")
 			libc.system("chmod 755 scripts/*.sh && echo ~qActivating shell scripts.~q")
 			
 		#Endif
 		
 		' UPDATE BIN/MODULES
 		PROC.RebuildMX2CC(True)
-		
-		'PROC.BuildModules("", True, False, PROC.GetHost())
-		'PROC.BuildModules("", True, True, PROC.GetHost())
+		PROC.BuildModules("", True, False, PROC.GetHost())
+		PROC.BuildModules("", True, True, PROC.GetHost())
 		PROC.BuildDocs()
 
-		ChangeDir(CurrentDir())
+		ChangeDir(curDir)
 		
 	End)
 
