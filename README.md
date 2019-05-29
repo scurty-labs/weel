@@ -6,7 +6,7 @@ Weel is a 'Package Manager' for the Monkey2 Programming Language. Allowing you t
 
 *First, make sure you have 'git' installed.*
 
-*Clone this repository and build it in Ted2Go(or using 'weel buildr weel <platform>') as a console application named `weel`, move the contents of 'weel.products/' into your 'monkey2/bin' Installation folder*
+*Clone this repository and build it in Ted2Go(or using 'weel buildr weel (platform)') as a console application named `weel`, move the contents of 'weel.products/' into your 'monkey2/bin' Installation folder*
 
 *Next, add the full `monkey2/bin` path to your `PATH` environment variable so you can execute `weel` and `mx2cc` using the terminal/console from anywhere.*
 
