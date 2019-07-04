@@ -1,6 +1,8 @@
 {
 	"templater":"https://github.com/scurty-labs/templater",
 	"chronos":"https://github.com/scurty-labs/chronos",
+	"m2ci":"https://github.com/scurty-labs/m2ci",
+	"optionset":"https://github.com/scurty-labs/optionset",
 	"m2stp":"https://github.com/Hezkore/m2stp",
 	"m2libui":"https://github.com/Hezkore/m2libui",
 	"m2irc":"https://github.com/Hezkore/m2irc",

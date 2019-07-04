@@ -10,12 +10,12 @@ Function GenerateTemplate(name:String, type:String)
 		
 		' --- Create Project
 		If Not ElementExists<String>(LoadDir("asset::templates/"), type)
-			Print "Template '" + type + "' doesn't exist."
+			Print "Template type: '" + type + "' doesn't exist."
 			Return
 		Endif
-		
+
 		If Not CopyDir(typeDir, projectDir, True)
-			Print "Couldn't create Project: " + name
+			Print "Couldn't create Project: '" + name + "'"
 			Return
 		Endif
 		
@@ -31,7 +31,8 @@ Function GenerateTemplate(name:String, type:String)
 					SaveString(code.Format(LoadString(projectDir+"/"+file, False)), projectDir+"/main.monkey2", False)
 				Case "module.monkey2"
 					code.SetVar("MODULE_NAME", name)
-					SaveString(code.Format(LoadString(projectDir+"/"+file, False)), projectDir+"/"+name+".monkey2", False)
+					SaveString(code.Format(LoadString(typeDir+"/module.monkey2", False)), projectDir+"/"+name+".monkey2", False)
+					DeleteFile(projectDir+"/module.monkey2") ' YUCK!
 				Case "module.json"
 					code.SetVar("MODULE_NAME", name)
 					SaveString(code.Format(LoadString(projectDir+"/"+file, False)), projectDir+"/module.json", False)
@@ -45,7 +46,7 @@ Function GenerateTemplate(name:String, type:String)
 		
 	Else
 		
-		Print "Project '" + name + "' already exists"
+		Print "Project with the name: '" + name + "' already exists"
 		
 	Endif
 	
