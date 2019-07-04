@@ -131,7 +131,7 @@ Function Main:Void()
 	' - TEMPLATE GENERATION -
 	
 	OPTIONS.Add("new", 2, Lambda(this:Option)
-		GenerateTemplate(this[0], this[1])
+		GenerateTemplate(this[1], this[0])
 	End)
 	
 	
